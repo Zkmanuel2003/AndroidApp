@@ -46,9 +46,21 @@ fun HomeScreen() {
                 }
             )
 
+            "register" -> RegisterScreen(
+                onBackClick = {
+                    screen = "home"
+                },
+                onRegisterSuccess = {
+                    screen = "home"
+                }
+            )
+
             else -> HomeContent(
                 onLoginClick = {
                     screen = "login"
+                },
+                onRegisterClick={
+                    screen = "register"
                 },
                 onInfoClick = {
                     screen = "info"
@@ -61,7 +73,8 @@ fun HomeScreen() {
 @Composable
 fun HomeContent(
     onLoginClick: () -> Unit,
-    onInfoClick: () -> Unit
+    onInfoClick: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
     var loaded by remember {
         mutableStateOf(false)
@@ -105,7 +118,7 @@ fun HomeContent(
             )
 
             Text(
-                text = "Deine erste moderne Android App",
+                text = "Die erste moderne Android App",
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -114,7 +127,7 @@ fun HomeContent(
             Spacer(modifier = Modifier.height(40.dp))
 
             Button(
-                onClick = {},
+                onClick = onRegisterClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

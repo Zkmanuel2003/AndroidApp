@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -24,37 +25,46 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     onBackClick: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onRegisterSuccess: () -> Unit
 ) {
-    // hier bekommen wir den string
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var repeatPassword by remember { mutableStateOf("") }
 
-    // hier kriegen wir mit = direkt das objekt
-    val passwordFocusRequester = remember { FocusRequester() }
+    // verschiedene FocusRequest-Objekte
+    val passwordFocusRequester = remember { FocusRequester() } // konstruktor aufruf
+    val repeatPasswordFocusRequester = remember { FocusRequester() }
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
             .verticalScroll(rememberScrollState())
-            .imePadding(),
+            .imePadding()
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text( text = "Bitte anmelden")
+
+        Text(
+            text =  "Bitte Registrieren Sie sich",
+            fontSize =  20.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = { newtext -> email = newtext },
             label = { Text("E-Mail") },
-            modifier = Modifier.fillMaxWidth(), // kein focusrequester weil man hier nie reinspringen muss
+            modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
@@ -67,24 +77,48 @@ fun LoginScreen(
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { newText -> password = newText },
             label = { Text("Passwort") },
-            modifier = Modifier.fillMaxWidth().focusRequester(passwordFocusRequester),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(passwordFocusRequester),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    repeatPasswordFocusRequester.requestFocus()
+                }
+            )
+        )
+
+        OutlinedTextField(
+            value = repeatPassword,
+            onValueChange = { repeatPassword = it },
+            label = { Text("Passwort wiederholen") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(repeatPasswordFocusRequester),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             )
         )
+
+        if (password.isNotEmpty() && repeatPassword.isNotEmpty() && password != repeatPassword) {
+            Text(text = "Passwörter stimmen nicht überein", color = Color.Red)
+        }
+
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
                 // später Backend-Login
-                onLoginSuccess()
+                onRegisterSuccess()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Anmelden")
+            Text("Registrieren")
         }
 
         Spacer(modifier = Modifier.height(12.dp))
