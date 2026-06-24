@@ -26,10 +26,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.example.testapp.viewmodel.LoginViewModel
 
 
 @Composable
 fun LoginScreen(
+    loginViewModel: LoginViewModel,
     onBackClick: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
@@ -79,8 +81,11 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                // später Backend-Login
-                onLoginSuccess()
+                loginViewModel.login(
+                    email = email,
+                    password = password,
+                    onSuccess = onLoginSuccess
+                )
             },
             modifier = Modifier.fillMaxWidth()
         ) {

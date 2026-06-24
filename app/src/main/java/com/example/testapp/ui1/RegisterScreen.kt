@@ -29,10 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.testapp.viewmodel.RegisterViewModel
 
 
 @Composable
 fun RegisterScreen(
+    viewModel: RegisterViewModel,
     onBackClick: () -> Unit,
     onRegisterSuccess: () -> Unit
 ) {
@@ -113,8 +115,12 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                // später Backend-Login
-                onRegisterSuccess()
+                viewModel.register(
+                    email = email,
+                    password = password,
+                    repeatPassword = repeatPassword,
+                    onSuccess = onRegisterSuccess
+                )
             },
             modifier = Modifier.fillMaxWidth()
         ) {

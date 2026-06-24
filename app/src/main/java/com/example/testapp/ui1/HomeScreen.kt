@@ -13,10 +13,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.testapp.viewmodel.LoginViewModel
+import com.example.testapp.viewmodel.RegisterViewModel
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    loginViewModel: LoginViewModel,
+    registerViewModel: RegisterViewModel
+) {
     var screen by remember {
         mutableStateOf("home")
     }
@@ -38,15 +43,17 @@ fun HomeScreen() {
             )
 
             "login" -> LoginScreen(
+                loginViewModel = loginViewModel,
                 onBackClick = {
                     screen = "home"
                 },
                 onLoginSuccess = {
-                    screen = "home"
+                    screen = "main"
                 }
             )
 
             "register" -> RegisterScreen(
+                viewModel = registerViewModel,
                 onBackClick = {
                     screen = "home"
                 },
@@ -55,11 +62,17 @@ fun HomeScreen() {
                 }
             )
 
+            "main" -> MainScreen(
+                onBackClick = {
+                    screen = "home"
+                }
+            )
+
             else -> HomeContent(
                 onLoginClick = {
                     screen = "login"
                 },
-                onRegisterClick={
+                onRegisterClick = {
                     screen = "register"
                 },
                 onInfoClick = {
@@ -68,97 +81,48 @@ fun HomeScreen() {
             )
         }
     }
-}
-
-@Composable
+}@Composable
 fun HomeContent(
     onLoginClick: () -> Unit,
     onInfoClick: () -> Unit,
     onRegisterClick: () -> Unit
 ) {
-    var loaded by remember {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(Unit) {
-        loaded = true
-    }
-
-    val titleScale by animateFloatAsState(
-        targetValue = if (loaded) 1f else 0.85f,
-        animationSpec = tween(700),
-        label = "TitleScale"
-    )
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Text("Willkommen bei")
+        Text("FirstAPP", fontSize = 46.sp, fontWeight = FontWeight.Bold)
+        Text("Die erste moderne Android App")
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Button(
+            onClick = onRegisterClick,
+            modifier = Modifier.fillMaxWidth()
         ) {
+            Text("Konto anlegen")
+        }
 
-            Text(
-                text = "Willkommen bei",
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        Spacer(modifier = Modifier.height(14.dp))
 
-            Text(
-                text = "FirstAPP",
-                fontSize = 46.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.scale(titleScale)
-            )
+        Button(
+            onClick = onLoginClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Anmelden")
+        }
 
-            Text(
-                text = "Die erste moderne Android App",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+        Spacer(modifier = Modifier.height(14.dp))
 
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Button(
-                onClick = onRegisterClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large
-            ) {
-                Text("Konto anlegen")
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            Button(
-                onClick = onLoginClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large
-            ) {
-                Text("Anmelden")
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            OutlinedButton(
-                onClick = onInfoClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large
-            ) {
-                Text("Info")
-            }
+        OutlinedButton(
+            onClick = onInfoClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Info")
         }
     }
 }
