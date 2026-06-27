@@ -23,9 +23,12 @@ class MainActivity : ComponentActivity() {
         ).build()
 
         val userDao = database.userDao()
+        val prefs = getSharedPreferences("auth", MODE_PRIVATE)
 
-        val loginViewModel = LoginViewModel(userDao)
+        val loginViewModel = LoginViewModel(userDao, prefs)
         val registerViewModel = RegisterViewModel(userDao)
+
+        val startScreen = if (prefs.getString("logged_in_email", null) != null) "main" else "home"
 
         enableEdgeToEdge()
 
@@ -33,7 +36,9 @@ class MainActivity : ComponentActivity() {
             TestAppTheme {
                 HomeScreen(
                     loginViewModel = loginViewModel,
-                    registerViewModel = registerViewModel
+                    registerViewModel = registerViewModel,
+                    startScreen = startScreen,
+                    prefs = prefs
                 )
             }
         }

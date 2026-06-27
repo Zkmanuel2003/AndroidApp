@@ -1,36 +1,52 @@
 package com.example.testapp.ui1
 
+import android.content.SharedPreferences
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testapp.viewmodel.LoginViewModel
 import com.example.testapp.viewmodel.RegisterViewModel
 
+// Je höher die Zahl, desto "tiefer" im Stack — bestimmt die Swipe-Richtung
+val screenDepth = mapOf(
+    "home" to 0,
+    "login" to 1,
+    "register" to 1,
+    "info" to 1,
+    "main" to 2,
+    "auftrag" to 3,
+    "profil" to 3,
+    "einstellungen" to 3,
+)
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(
     loginViewModel: LoginViewModel,
-    registerViewModel: RegisterViewModel
+    registerViewModel: RegisterViewModel,
+    startScreen: String,
+    prefs: SharedPreferences
 ) {
-    var screen by remember {
-        mutableStateOf("home")
-    }
+    var screen by remember { mutableStateOf(startScreen) }
 
     AnimatedContent(
         targetState = screen,
         transitionSpec = {
-            fadeIn(tween(300)) + slideInHorizontally { fullWidth -> fullWidth } togetherWith
-                    fadeOut(tween(200)) + slideOutHorizontally { fullWidth -> -fullWidth }
+            val goingForward = (screenDepth[targetState] ?: 0) >= (screenDepth[initialState] ?: 0)
+            if (goingForward) {
+                fadeIn(tween(300)) + slideInHorizontally { it } togetherWith
+                        fadeOut(tween(200)) + slideOutHorizontally { -it }
+            } else {
+                fadeIn(tween(300)) + slideInHorizontally { -it } togetherWith
+                        fadeOut(tween(200)) + slideOutHorizontally { it }
+            }
         },
         label = "ScreenAnimation"
     ) { currentScreen ->
@@ -62,10 +78,30 @@ fun HomeScreen(
                 }
             )
 
-            "main" -> MainScreen(
-                onBackClick = {
+            "main" -> Dashboard(
+                onAuftragClick = { screen = "auftrag" },
+                onProfilClick = { screen = "profil" },
+                onEinstellungenClick = { screen = "einstellungen" },
+                onLogoutClick = {
+                    prefs.edit().remove("logged_in_email").apply()
                     screen = "home"
                 }
+            )
+
+            "auftrag" -> AuftragScreen(
+                onBackClick = { screen = "main" }
+            )
+
+            "profil" -> ProfilScreen(
+                onBackClick = { screen = "main" },
+                onLogout = {
+                    prefs.edit().remove("logged_in_email").apply()
+                    screen = "home"
+                }
+            )
+
+            "einstellungen" -> Einstellung(
+                onBackClick = { screen = "main" }
             )
 
             else -> HomeContent(
@@ -81,7 +117,9 @@ fun HomeScreen(
             )
         }
     }
-}@Composable
+}
+
+@Composable
 fun HomeContent(
     onLoginClick: () -> Unit,
     onInfoClick: () -> Unit,
@@ -90,7 +128,8 @@ fun HomeContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .windowInsetsPadding(WindowInsets.navigationBars),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

@@ -1,5 +1,6 @@
 package com.example.testapp.viewmodel
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testapp.data.UserDao
@@ -8,7 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    private val prefs: SharedPreferences
 ) : ViewModel() {
 
     private val _message = MutableStateFlow("")
@@ -28,6 +30,7 @@ class LoginViewModel(
             val user = userDao.login(email, password)
 
             if (user != null) {
+                prefs.edit().putString("logged_in_email", email).apply()
                 _message.value = "Login erfolgreich"
                 onSuccess()
             } else {

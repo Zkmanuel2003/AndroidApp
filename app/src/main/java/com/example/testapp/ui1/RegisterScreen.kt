@@ -3,11 +3,14 @@ package com.example.testapp.ui1
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -49,10 +52,11 @@ fun RegisterScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding()
-            .padding(24.dp),
+            .fillMaxSize()  // nimm den gesamten verfügbaren Platz
+            .verticalScroll(rememberScrollState()) // mach es scrollbar (bei langer Liste / Tastatur)
+            .imePadding() // wenn Tastatur aufgeht → schieb Inhalt nach oben
+            .windowInsetsPadding(WindowInsets.navigationBars) // fügt den abstand so hin wie groß die navihationsleiste ist
+            .padding(24.dp), // 24dp Innenabstand auf allen Seiten
         verticalArrangement = Arrangement.Center
     ) {
 
