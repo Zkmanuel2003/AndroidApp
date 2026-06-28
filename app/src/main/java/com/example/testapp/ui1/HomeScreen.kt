@@ -1,6 +1,7 @@
 package com.example.testapp.ui1
 
 import android.content.SharedPreferences
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.testapp.data.AuftragDao
+import com.example.testapp.viewmodel.AuftragViewModel
 import com.example.testapp.viewmodel.LoginViewModel
 import com.example.testapp.viewmodel.RegisterViewModel
 
@@ -26,15 +29,34 @@ val screenDepth = mapOf(
     "einstellungen" to 3,
 )
 
+// Wohin geht der Zurück-Button je nach Screen (null = App schließen)
+val screenBack = mapOf(
+    "login" to "home",
+    "register" to "home",
+    "info" to "home",
+    "auftrag" to "main",
+    "profil" to "main",
+    "einstellungen" to "main",
+)
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(
     loginViewModel: LoginViewModel,
     registerViewModel: RegisterViewModel,
     startScreen: String,
-    prefs: SharedPreferences
+    prefs: SharedPreferences,
+    auftragDao: AuftragDao
 ) {
+    val userEmail = prefs.getString("logged_in_email", "") ?: ""
+    val auftragViewModel = remember { AuftragViewModel(auftragDao, userEmail) }
     var screen by remember { mutableStateOf(startScreen) }
+
+    // Zurück-Button abfangen — nur aktiv wenn screenBack einen Eintrag hat
+    // "home" und "main" sind nicht drin → dort schließt die App normal
+    BackHandler(enabled = screenBack.containsKey(screen)) {
+        screen = screenBack[screen] ?: "main"
+    }
 
     AnimatedContent(
         targetState = screen,
@@ -89,6 +111,7 @@ fun HomeScreen(
             )
 
             "auftrag" -> AuftragScreen(
+                viewModel = auftragViewModel,
                 onBackClick = { screen = "main" }
             )
 

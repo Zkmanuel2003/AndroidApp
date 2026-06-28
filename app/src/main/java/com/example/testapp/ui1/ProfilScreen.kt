@@ -40,14 +40,5 @@ fun ProfilScreen(
         ) {
             Text("Abmelden")
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedButton(
-            onClick = onBackClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Zurück zum Dashboard")
-        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.testapp.ui1
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assignment
@@ -101,7 +102,7 @@ fun Dashboard(
                     Column {
                         Text("Aufträge", fontWeight = FontWeight.SemiBold)
                         Text(
-                            "Alles auf ein Blick",
+                            "Autragsübersicht",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

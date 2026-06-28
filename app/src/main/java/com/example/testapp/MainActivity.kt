@@ -20,9 +20,10 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             AppDatabase::class.java,
             "testapp_database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
 
         val userDao = database.userDao()
+        val auftragDao = database.auftragDao()
         val prefs = getSharedPreferences("auth", MODE_PRIVATE)
 
         val loginViewModel = LoginViewModel(userDao, prefs)
@@ -38,7 +39,8 @@ class MainActivity : ComponentActivity() {
                     loginViewModel = loginViewModel,
                     registerViewModel = registerViewModel,
                     startScreen = startScreen,
-                    prefs = prefs
+                    prefs = prefs,
+                    auftragDao = auftragDao
                 )
             }
         }

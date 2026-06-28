@@ -50,13 +50,5 @@ fun InfoScreen(
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = onBackClick
-        ) {
-            Text("Zurück")
-        }
     }
 }

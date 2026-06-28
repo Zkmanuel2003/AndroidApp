@@ -40,14 +40,5 @@ fun Einstellung(
             text = "Dieser Bereich wird noch entwickelt.",
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        OutlinedButton(
-            onClick = onBackClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Zurück zum Dashboard")
-        }
     }
 }
